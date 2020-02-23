@@ -9,6 +9,7 @@ namespace Socket_Server
     class Server
     {
         private const string EOF = "<EOF>";
+        private const string CID = "\n";
         public static void ExecuteServer()
         {
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
@@ -29,13 +30,14 @@ namespace Socket_Server
                 listner.Listen(10);
                 Console.WriteLine("Server Started.");
                 Console.WriteLine("Waiting connection...");
+                Socket clientSocket = listner.Accept();
 
                 while (true)
                 {
 
                     //suspend while waiting for incoming connection using accept
                     //the server will accept conection from a client
-                    Socket clientSocket = listner.Accept();
+
 
                     //data buffer
                     byte[] recived_bytes = new byte[1024];
@@ -51,8 +53,10 @@ namespace Socket_Server
 
                     }
                     int indexEOF = data.IndexOf(EOF);
+                    int IndexOfId = data.IndexOf(CID);
                    string dataFiltered = data.Substring(0, indexEOF);
-                    Console.WriteLine("Server: {0} ", dataFiltered);
+                    string clientId = data.Substring(0, IndexOfId);
+                    Console.WriteLine( dataFiltered);
                     byte[] server_message = Encoding.ASCII.GetBytes("Test Server is now connected");
                     clientSocket.Send(server_message);
 
